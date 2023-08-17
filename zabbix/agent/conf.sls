@@ -8,8 +8,8 @@ include:
 
 {{ zabbix.agent.config }}:
   file.managed:
-    - source: {{ files_switch(['/etc/zabbix/zabbix_agentd.conf',
-                               '/etc/zabbix/zabbix_agentd.conf.jinja'],
+    - source: {{ files_switch(['/etc/zabbix/zabbix_agent2.conf',
+                               '/etc/zabbix/zabbix_agent2.conf.jinja'],
                               lookup='zabbix-agent-config'
                  )
               }}

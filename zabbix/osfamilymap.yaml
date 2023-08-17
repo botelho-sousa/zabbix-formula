@@ -21,16 +21,16 @@ Debian:
       - zabbix-agent2
       - zabbix-sender
     service: zabbix-agent2
-    config: /etc/zabbix/zabbix_agentd2.conf
-    pidfile: /var/run/zabbix/zabbix_agentd.pid
-    logfile: /var/log/zabbix/zabbix_agentd.log
+    config: /etc/zabbix/zabbix_agent2.conf
+    pidfile: /var/run/zabbix/zabbix_agent2.pid
+    logfile: /var/log/zabbix/zabbix_agent2.log
     logfilesize: '0'
     server:
       - 127.0.0.1
     serveractive:
       - 127.0.0.1
     includes:
-      - /etc/zabbix/zabbix_agentd.d/
+      - /etc/zabbix/zabbix_agent2.d/
   server:
     pkgs:
       - zabbix-server-mysql
@@ -92,11 +92,11 @@ RedHat:
     pkgs:
       - zabbix-agent
     service: zabbix-agent
-    config: /etc/zabbix/zabbix_agentd.conf
-    pidfile: /var/run/zabbix/zabbix_agentd.pid
-    logfile: /var/log/zabbix/zabbix_agentd.log
+    config: /etc/zabbix/zabbix_agent2.conf
+    pidfile: /var/run/zabbix/zabbix_agent2.pid
+    logfile: /var/log/zabbix/zabbix_agent2.log
     includes:
-      - /etc/zabbix/zabbix_agentd.d/*.conf
+      - /etc/zabbix/zabbix_agent2.d/*.conf
   server:
     pkgs:
       - zabbix-server-mysql
@@ -133,11 +133,11 @@ Suse:
     pkgs:
       - zabbix-agent
     service: zabbix-agent
-    config: /etc/zabbix/zabbix_agentd.conf
-    pidfile: /run/zabbix/zabbix_agentd.pid
-    logfile: /var/log/zabbix/zabbix_agentd.log
+    config: /etc/zabbix/zabbix_agent2.conf
+    pidfile: /run/zabbix/zabbix_agent2.pid
+    logfile: /var/log/zabbix/zabbix_agent2.log
     includes:
-      - /etc/zabbix/zabbix_agentd.d/*.conf
+      - /etc/zabbix/zabbix_agent2.d/*.conf
   server:
     pkgs:
       - zabbix-server-mysql
@@ -178,24 +178,24 @@ FreeBSD:
   shell: /sbin/nologin
   agent:
     pkgs:
-      - zabbix22-agent
-    service: zabbix_agentd
-    config: /usr/local/etc/zabbix22/zabbix_agentd.conf
-    pidfile: /var/run/zabbix/zabbix_agentd.pid
-    logfile: /var/log/zabbix/zabbix_agentd.log
+      - zabbix-agent
+    service: zabbix_agent2
+    config: /usr/local/etc/zabbix/zabbix_agent2.conf
+    pidfile: /var/run/zabbix/zabbix_agent2.pid
+    logfile: /var/log/zabbix/zabbix_agent2.log
   server:
     pkgs:
-      - zabbix22-server
+      - zabbix-server
     service: zabbix
-    config: /usr/local/etc/zabbix22/zabbix_server.conf
+    config: /usr/local/etc/zabbix/zabbix_server.conf
     dbsocket: /var/run/mysqld/mysqld.sock
     pidfile: /var/run/zabbix/zabbix_server.pid
     logfile: /var/log/zabbix/zabbix_server.log
   proxy:
     pkgs:
-      - zabbix22-proxy
+      - zabbix-proxy
     service: zabbix_proxy
-    config: /usr/local/etc/zabbix22/zabbix_proxy.conf
+    config: /usr/local/etc/zabbix/zabbix_proxy.conf
     dbname: /var/lib/zabbix/zabbix_proxy.db
     pidfile: /var/run/zabbix/zabbix_proxy.pid
     logfile: /var/log/zabbix/zabbix_proxy.log
@@ -208,10 +208,10 @@ OpenBSD:
   agent:
     pkgs:
       - zabbix-agent2
-    service: zabbix_agentd
-    config: /etc/zabbix/zabbix_agentd.conf
-    pidfile: /var/run/zabbix/zabbix_agentd.pid
-    logfile: /var/log/zabbix/zabbix_agentd.log
+    service: zabbix_agent2
+    config: /etc/zabbix/zabbix_agent2.conf
+    pidfile: /var/run/zabbix/zabbix_agent2.pid
+    logfile: /var/log/zabbix/zabbix_agent2.log
 
 Windows:
   user: Administrator
@@ -221,8 +221,8 @@ Windows:
     pkgs:
       - zabbix-agent2
     service: Zabbix Agent2
-    config: C:\\Program Files\\Zabbix Agent\\zabbix_agentd.conf
-    logfile: C:\\Program Files\\Zabbix Agent\\zabbix_agentd.log
+    config: C:\\Program Files\\Zabbix Agent\\zabbix_agent2.conf
+    logfile: C:\\Program Files\\Zabbix Agent\\zabbix_agent2.log
     logfilesize: '5'
     pidfile: ''
     includes: []
