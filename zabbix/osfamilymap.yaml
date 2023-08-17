@@ -11,7 +11,7 @@
 # osfamilymap: {}
 ---
 Debian:
-  version_repo: 6.2
+  #version_repo: 6.5
   user: zabbix
   group: zabbix
   home: /var/lib/zabbix
@@ -84,7 +84,7 @@ Debian:
       - postgresql-client
 
 RedHat:
-  version_repo: 6.2
+  #version_repo: 6.5
   user: zabbix
   group: zabbix
   shell: /sbin/nologin
@@ -125,7 +125,7 @@ RedHat:
       - MySQL-python
 
 Suse:
-  version_repo: 5.0
+  #version_repo: 6.5
   user: zabbix
   group: zabbix
   shell: /sbin/nologin
@@ -171,7 +171,7 @@ Suse:
 
 
 FreeBSD:
-  version_repo: 6.2
+  version_repo: 6.5
   user: zabbix
   group: zabbix
   home: /var/lib/zabbix
@@ -201,13 +201,13 @@ FreeBSD:
     logfile: /var/log/zabbix/zabbix_proxy.log
 
 OpenBSD:
-  version_repo: 6.2
+  version_repo: 6.5
   user: _zabbix
   group: _zabbix
   shell: /sbin/nologin
   agent:
     pkgs:
-      - zabbix-agent
+      - zabbix-agent2
     service: zabbix_agentd
     config: /etc/zabbix/zabbix_agentd.conf
     pidfile: /var/run/zabbix/zabbix_agentd.pid
@@ -217,10 +217,10 @@ Windows:
   user: Administrator
   group: Administrators
   agent:
-    version: 5.0
+    version: 6.5
     pkgs:
-      - zabbix-agent
-    service: Zabbix Agent
+      - zabbix-agent2
+    service: Zabbix Agent2
     config: C:\\Program Files\\Zabbix Agent\\zabbix_agentd.conf
     logfile: C:\\Program Files\\Zabbix Agent\\zabbix_agentd.log
     logfilesize: '5'

@@ -15,6 +15,6 @@ include:
               }}
     - template: jinja
     - require:
-      - pkg: zabbix-agent
+      - pkg: zabbix-agent2
     - watch_in:
-      - module: zabbix-agent-restart
+      - module: zabbix-agent2-restart

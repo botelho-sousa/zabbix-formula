@@ -2,7 +2,7 @@
 # vim: ft=yaml
 ---
 zabbix:
-  version_repo: 6.2
+  version_repo: 6.4
   user: zabbix
   group: zabbix
   home: /var/lib/zabbix
@@ -17,9 +17,9 @@ zabbix:
     logfile: /var/log/zabbix/zabbix_agentd.log
     logfilesize: '0'
     server:
-      - 127.0.0.1
+      - zabbix.oneit.pt
     serveractive:
-      - 127.0.0.1
+      - zabbix.oneit.pt
     includes:
       - /etc/zabbix/zabbix_agentd.d/
   server:
@@ -37,7 +37,7 @@ zabbix:
     dbuser: zabbix
     dbpassword: zabbix
     dbsocket: /var/run/mysqld/mysqld.sock
-    timeout: '4'
+    timeout: '5'
     alertscriptspath: /usr/lib/zabbix/alertscripts
     externalscripts: /usr/lib/zabbix/externalscripts
     fpinglocation: /usr/bin/fping

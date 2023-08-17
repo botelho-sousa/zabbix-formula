@@ -15,14 +15,14 @@ extend:
     {% if salt['grains.get']('os_family') in ['Debian', 'Suse'] -%}
     pkgrepo:
       - require_in:
-        - pkg: zabbix-agent
+        - pkg: zabbix-agent2
     {% elif salt['grains.get']('os_family') == 'RedHat' -%}
     pkgrepo:
       - require_in:
-        - pkg: zabbix-agent
+        - pkg: zabbix-agent2
   zabbix_agent_non_supported_repo:
     pkgrepo:
       - require_in:
-        - pkg: zabbix-agent
+        - pkg: zabbix-agent2
     {%- else %} {}
     {%- endif %}
