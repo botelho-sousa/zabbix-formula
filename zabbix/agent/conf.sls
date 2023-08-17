@@ -17,4 +17,4 @@ include:
     - require:
       - pkg: zabbix-agent2
     - watch_in:
-      - module: zabbix-agent2-restart
+      - module: zabbix-agent-restart
