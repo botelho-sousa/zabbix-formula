@@ -61,7 +61,7 @@ zabbix-agent-piddir:
     - group: {{ zabbix.group }}
     - dirmode: 750
     - require:
-      - pkg: zabbix-agent2
+      - pkg: zabbix-agent
 {%- endfor %}
 
 {% if salt['grains.get']('selinux:enforced', False) == 'Enforcing' %}
