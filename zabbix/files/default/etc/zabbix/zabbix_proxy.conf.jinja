@@ -7,7 +7,7 @@
 {% endif -%}
 # Managed by saltstack
 # This is a configuration file for Zabbix proxy daemon
-# To get more information about Zabbix, visit http://www.zabbix.com
+# To get more information about Zabbix, visit https://www.zabbix.com
 
 ############ GENERAL PARAMETERS #################
 
@@ -39,6 +39,7 @@
 # Server=
 {% if settings.get('server', defaults.get('server', False)) %}Server={{ settings.get('server', defaults.server) }}{% endif %}
 
+{% if zabbix.version_repo|float <= 6.0 -%}
 ### Option: ServerPort
 #	Port of Zabbix trapper on Zabbix server.
 #	For a proxy in the passive mode this parameter will be ignored.
@@ -48,6 +49,7 @@
 # Default:
 # ServerPort=10051
 {% if settings.get('serverport', defaults.get('serverport', False)) %}ServerPort={{ settings.get('serverport', defaults.serverport) }}{% endif %}
+{% endif %}
 
 ### Option: Hostname
 #	Unique, case sensitive Proxy name. Make sure the Proxy name is known to the server!
@@ -184,6 +186,10 @@
 {% if settings.get('socketdir', defaults.get('socketdir', False)) %}SocketDir={{ settings.get('socketdir', defaults.socketdir) }}{% endif %}
 {% endif %}
 
+{% if zabbix.version_repo|float >= 7.0 -%}
+### NOTE: Support for Oracle DB is deprecated since Zabbix 7.0 and will be removed in future versions.
+{% endif %}
+
 ### Option: DBHost
 #	Database host name.
 #	If set to localhost, socket is used for MySQL.
@@ -285,6 +291,55 @@
 # ProxyOfflineBuffer=1
 {% if settings.get('proxyofflinebuffer', defaults.get('proxyofflinebuffer', False)) %}ProxyOfflineBuffer={{ settings.get('proxyofflinebuffer', defaults.proxyofflinebuffer) }}{% endif %}
 
+{% if zabbix.version_repo|float >= 7.0 -%}
+### Option: ProxyBufferMode
+#	Specifies history, discovery and auto registration data storage mechanism:
+#		disk	- data are stored in database and uploaded from database
+#		memory	- data are stored in memory and uploaded from memory.
+#                         If buffer runs out of memory the old data will be discarded.
+#                         On shutdown the buffer is discarded.
+#		hybrid	- the proxy buffer normally works like in memory mode until it runs out of memory or
+#			  the oldest record exceeds the configured age. If that happens the buffer is flushed
+#			  to database and it works like in disk mode until all data have been uploaded and
+#			  it starts working with memory again. On shutdown the memory buffer is flushed
+#                         to database.
+#
+# Mandatory: no
+# Values: disk, memory, hybrid
+# Default:
+# ProxyBufferMode=disk
+{% if settings.get('proxybuffermode', defaults.get('proxybuffermode', False)) %}ProxyBufferMode={{ settings.get('proxybuffermode', defaults.proxybuffermode) }}{% endif %}
+{% endif %}
+
+{% if zabbix.version_repo|float >= 7.0 -%}
+### Option: ProxyMemoryBufferSize
+#	Size of shared memory cache for collected history, discovery and auto registration data, in bytes.
+#	If enabled (not zero) proxy will keep history discovery and auto registration data in memory unless
+#	cache is full or stored records are older than defined ProxyMemoryBufferAge.
+#	This parameter cannot be used together with ProxyLocalBuffer parameter.
+#
+# Mandatory: no
+# Range: 0,128K-2G
+# Default:
+# ProxyMemoryBufferSize=0
+{% if settings.get('proxymemorybuffersize', defaults.get('proxymemorybuffersize', False)) %}ProxyMemoryBufferSize={{ settings.get('proxymemorybuffersize', defaults.proxymemorybuffersize) }}{% endif %}
+{% endif %}
+
+{% if zabbix.version_repo|float >= 7.0 -%}
+### Option: ProxyMemoryBufferAge
+#	Maximum age of data in proxy memory buffer, in seconds.
+#	When enabled (not zero) and records in proxy memory buffer are older, then it forces proxy buffer
+#	to switch to database mode until all records are uploaded to server.
+#	This parameter must be less or equal to ProxyOfflineBuffer parameter (note different units).
+#
+# Mandatory: no
+# Range: 0,600-864000
+# Default:
+# ProxyMemoryBufferAge=0
+{% if settings.get('proxymemorybufferage', defaults.get('proxymemorybufferage', False)) %}ProxyMemoryBufferAge={{ settings.get('proxymemorybufferage', defaults.proxymemorybufferage) }}{% endif %}
+{% endif %}
+
+{% if zabbix.version_repo|float <= 6.2 -%}
 ### Option: HeartbeatFrequency
 #	Frequency of heartbeat messages in seconds.
 #	Used for monitoring availability of Proxy on server side.
@@ -296,7 +351,9 @@
 # Default:
 # HeartbeatFrequency=60
 {% if settings.get('heartbeatfrequency', defaults.get('heartbeatfrequency', False)) %}HeartbeatFrequency={{ settings.get('heartbeatfrequency', defaults.heartbeatfrequency) }}{% endif %}
+{% endif %}
 
+{% if zabbix.version_repo|float <= 6.2 -%}
 ### Option: ConfigFrequency
 #	How often proxy retrieves configuration data from Zabbix Server in seconds.
 #	For a proxy in the passive mode this parameter will be ignored.
@@ -304,8 +361,26 @@
 # Mandatory: no
 # Range: 1-3600*24*7
 # Default:
-# ConfigFrequency=3600
+# ConfigFrequency=300
 {% if settings.get('configfrequency', defaults.get('configfrequency', False)) %}ConfigFrequency={{ settings.get('configfrequency', defaults.configfrequency) }}{% endif %}
+{% endif %}
+
+{% if zabbix.version_repo|float >= 6.4 -%}
+### Option: ConfigFrequency - Deprecated, use ProxyConfigFrequency
+#	How often proxy retrieves configuration data from Zabbix Server in seconds.
+#	For a proxy in the passive mode this parameter will be ignored.
+# Mandatory: no
+
+### Option: ProxyConfigFrequency
+#	How often proxy retrieves configuration data from Zabbix Server in seconds.
+#	For a proxy in the passive mode this parameter will be ignored.
+#
+# Mandatory: no
+# Range: 1-3600*24*7
+# Default:
+# ProxyConfigFrequency=10
+{% if settings.get('proxyconfigfrequency', defaults.get('proxyconfigfrequency', False)) %}ProxyConfigFrequency={{ settings.get('proxyconfigfrequency', defaults.proxyconfigfrequency) }}{% endif %}
+{% endif %}
 
 ### Option: DataSenderFrequency
 #	Proxy will send collected data to the Server every N seconds.
@@ -328,6 +403,50 @@
 # StartPollers=5
 {% if settings.get('startpollers', defaults.get('startpollers', False)) %}StartPollers={{ settings.get('startpollers', defaults.startpollers) }}{% endif %}
 
+{% if zabbix.version_repo|float >= 7.0 -%}
+### Option: StartAgentPollers
+#	Number of pre-forked instances of asynchronous Zabbix agent pollers. Also see MaxConcurrentChecksPerPoller.
+#
+# Mandatory: no
+# Range: 0-1000
+# Default:
+# StartAgentPollers=1
+{% if settings.get('startagentpollers', defaults.get('startagentpollers', False)) %}StartAgentPollers={{ settings.get('startagentpollers', defaults.startagentpollers) }}{% endif %}
+{% endif %}
+
+{% if zabbix.version_repo|float >= 7.0 -%}
+### Option: StartHTTPAgentPollers
+#	Number of pre-forked instances of asynchronous HTTP agent pollers. Also see MaxConcurrentChecksPerPoller.
+#
+# Mandatory: no
+# Range: 0-1000
+# Default:
+# StartHTTPAgentPollers=1
+{% if settings.get('starthttpagentpollers', defaults.get('starthttpagentpollers', False)) %}StartHTTPAgentPollers={{ settings.get('starthttpagentpollers', defaults.starthttpagentpollers) }}{% endif %}
+{% endif %}
+
+{% if zabbix.version_repo|float >= 7.0 -%}
+### Option: StartSNMPPollers
+#	Number of pre-forked instances of asynchronous SNMP pollers. Also see MaxConcurrentChecksPerPoller.
+#
+# Mandatory: no
+# Range: 0-1000
+# Default:
+# StartSNMPPollers=1
+{% if settings.get('startsnmppollers', defaults.get('startsnmppollers', False)) %}StartSNMPPollers={{ settings.get('startsnmppollers', defaults.startsnmppollers) }}{% endif %}
+{% endif %}
+
+{% if zabbix.version_repo|float >= 7.0 -%}
+### Option: MaxConcurrentChecksPerPoller
+#	Maximum number of asynchronous checks that can be executed at once by each HTTP agent poller or agent poller.
+#
+# Mandatory: no
+# Range: 1-1000
+# Default:
+# MaxConcurrentChecksPerPoller=1000
+{% if settings.get('maxconcurrentcheckspollers', defaults.get('maxconcurrentcheckspollers', False)) %}MaxConcurrentChecksPerPoller={{ settings.get('maxconcurrentcheckspollers', defaults.maxconcurrentcheckspollers) }}{% endif %}
+{% endif %}
+
 ### Option: StartIPMIPollers
 #	Number of pre-forked instances of IPMI pollers.
 #		The IPMI manager process is automatically started when at least one IPMI poller is started.
@@ -340,13 +459,14 @@
 
 {% if zabbix.version_repo|float >= 4.2 -%}
 ### Option: StartPreprocessors
-#	Number of pre-forked instances of preprocessing workers.
-#		The preprocessing manager process is automatically started when preprocessor worker is started.
+#	Number of pre-started instances of preprocessing worker threads should be set to no less than
+#	the available CPU core count. More workers should be set if preprocessing is not CPU-bound and has
+#	lots of network requests.
 #
 # Mandatory: no
 # Range: 1-1000
 # Default:
-# StartPreprocessors=3
+# StartPreprocessors=16
 {% if settings.get('startpreprocessors', defaults.get('startpreprocessors', False)) %}StartPreprocessors={{ settings.get('startpreprocessors', defaults.startpreprocessors) }}{% endif %}
 {% endif %}
 
@@ -361,7 +481,7 @@
 # StartPollersUnreachable=1
 {% if settings.get('startpollersunreachable', defaults.get('startpollersunreachable', False)) %}StartPollersUnreachable={{ settings.get('startpollersunreachable', defaults.startpollersunreachable) }}{% endif %}
 
-{% if zabbix.version_repo|float >= 6.0 -%}
+{% if zabbix.version_repo|float <= 6.0 -%}
 ### Option: StartHistoryPollers
 #	Number of pre-forked instances of history pollers.
 #	Only required for internal checks.
@@ -394,12 +514,12 @@
 {% if settings.get('startpingers', defaults.get('startpingers', False)) %}StartPingers={{ settings.get('startpingers', defaults.startpingers) }}{% endif %}
 
 ### Option: StartDiscoverers
-#	Number of pre-forked instances of discoverers.
+#	Number of pre-started instances of discovery workers.
 #
 # Mandatory: no
-# Range: 0-250
+# Range: 0-1000
 # Default:
-# StartDiscoverers=1
+# StartDiscoverers=5
 {% if settings.get('startdiscoverers', defaults.get('startdiscoverers', False)) %}StartDiscoverers={{ settings.get('startdiscoverers', defaults.startdiscoverers) }}{% endif %}
 
 ### Option: StartHTTPPollers
@@ -418,8 +538,7 @@
 # Mandatory: no
 # Default:
 # JavaGateway=
-{% if settings.get('javagateway', defaults.get('javagateway', False)) %}
-JavaGateway={{ settings.get('javagateway', defaults.javagateway) }}
+{% if settings.get('javagateway', defaults.get('javagateway', False)) %}JavaGateway={{ settings.get('javagateway', defaults.javagateway) }}{% endif %}
 
 ### Option: JavaGatewayPort
 #	Port that Zabbix Java gateway listens on.
@@ -428,7 +547,7 @@ JavaGateway={{ settings.get('javagateway', defaults.javagateway) }}
 # Range: 1024-32767
 # Default:
 # JavaGatewayPort=10052
-JavaGatewayPort={{ settings.get('javagatewayport', defaults.javagatewayport) }}
+{% if settings.get('javagatewayport', defaults.get('javagatewayport', False)) %}JavaGatewayPort={{ settings.get('javagatewayport', defaults.javagatewayport) }}{% endif %}
 
 ### Option: StartJavaPollers
 #	Number of pre-forked instances of Java pollers.
@@ -437,8 +556,7 @@ JavaGatewayPort={{ settings.get('javagatewayport', defaults.javagatewayport) }}
 # Range: 0-1000
 # Default:
 # StartJavaPollers=0
-StartJavaPollers={{ settings.get('startjavapollers', defaults.startjavapollers) }}
-{% endif %}
+{% if settings.get('startjavapollers', defaults.get('startjavapollers', False)) %}StartJavaPollers={{ settings.get('startjavapollers', defaults.startjavapollers) }}{% endif %}
 
 ### Option: StartVMwareCollectors
 #	Number of pre-forked vmware collector instances.
@@ -595,7 +713,7 @@ StartJavaPollers={{ settings.get('startjavapollers', defaults.startjavapollers) 
 {% endif %}
 
 ### Option: Timeout
-#	Specifies how long we wait for agent, SNMP device or external check (in seconds).
+#	Specifies how long to wait (in seconds) for establishing connection and exchanging data with Zabbix server, agent, web service, and for SNMP checks (except SNMP `walk[OID]` and `get[OID]` items) and `icmpping[*]` item.
 #
 # Mandatory: no
 # Range: 1-30
@@ -604,7 +722,9 @@ StartJavaPollers={{ settings.get('startjavapollers', defaults.startjavapollers) 
 {% if settings.get('timeout', defaults.get('timeout', False)) %}Timeout={{ settings.get('timeout', defaults.timeout) }}{% endif %}
 
 ### Option: TrapperTimeout
-#	Specifies how many seconds trapper may spend processing new data.
+#	Specifies timeout in seconds for:
+#		Retrieval of configuration data from Zabbix server
+#		Global script / remote command execution
 #
 # Mandatory: no
 # Range: 1-300
@@ -746,7 +866,7 @@ Include={{ include }}
 {% if zabbix.version_repo|float >= 2.4 -%}
 ### Option: SSLCertLocation
 #	Location of SSL client certificates.
-#	This parameter is used only in web monitoring.
+#	This parameter is used in web monitoring and for communication with Vault.
 #	Default depends on compilation options.
 #	To see the default path run command "zabbix_proxy --help".
 #
@@ -757,7 +877,7 @@ Include={{ include }}
 
 ### Option: SSLKeyLocation
 #	Location of private keys for SSL client certificates.
-#	This parameter is used only in web monitoring.
+#	This parameter is used in web monitoring and for communication with Vault.
 #	Default depends on compilation options.
 #	To see the default path run command "zabbix_proxy --help".
 #
@@ -1049,6 +1169,19 @@ LoadModule={{ loadmodule }}
 # Default:
 # DBTLSCipher13=
 {% if settings.get('dbtlscipher13', defaults.get('dbtlscipher13', False)) %}DBTLSCipher13={{ settings.get('dbtlscipher13', defaults.dbtlscipher13) }}{% endif %}
+{% endif %}
+
+{% if zabbix.version_repo|float >= 6.2 -%}
+### Option: Vault
+#	Specifies vault:
+#		HashiCorp - HashiCorp KV Secrets Engine - Version 2
+#		CyberArk  - CyberArk Central Credential Provider
+#
+# Mandatory: no
+# Default:
+# Vault=HashiCorp
+{% if settings.get('vault', defaults.get('vault', False)) %}Vault={{ settings.get('vault', defaults.vault) }}{% endif %}
+{% endif %}
 
 {% if zabbix.version_repo|float >= 6.0 -%}
 ### Option: VaultToken
@@ -1057,10 +1190,13 @@ LoadModule={{ loadmodule }}
 #	It is an error if VaultToken and VAULT_TOKEN environment variable are defined at the same time.
 #
 # Mandatory: no
+#	(yes, if Vault is explicitly set to HashiCorp)
 # Default:
 # VaultToken=
 {% if settings.get('vaulttoken', defaults.get('vaulttoken', False)) %}VaultToken={{ settings.get('vaulttoken', defaults.vaulttoken) }}{% endif %}
+{% endif %}
 
+{% if zabbix.version_repo|float >= 6.0 -%}
 ### Option: VaultURL
 #	Vault server HTTP[S] URL. System-wide CA certificates directory will be used if SSLCALocation is not specified.
 #
@@ -1068,16 +1204,63 @@ LoadModule={{ loadmodule }}
 # Default:
 # VaultURL=https://127.0.0.1:8200
 {% if settings.get('vaulturl', defaults.get('vaulturl', False)) %}VaultURL={{ settings.get('vaulturl', defaults.vaulturl) }}{% endif %}
+{% endif %}
 
+{% if zabbix.version_repo|float >= 7.0 -%}
+### Option: VaultPrefix
+#	Custom prefix for Vault path or query depending on the Vault.
+#	Most suitable defaults will be used if not specified.
+#	Note that 'data' is automatically appended after mountpoint for HashiCorp if VaultPrefix is not specified.
+#	Example prefix for HashiCorp:
+#		/v1/secret/data/zabbix/
+#	Example prefix for CyberArk:
+#		/AIMWebService/api/Accounts?
+# Mandatory: no
+# Default:
+# VaultPrefix=
+{% if settings.get('vaultprefix', defaults.get('vaultprefix', False)) %}VaultPrefix={{ settings.get('vaultprefix', defaults.vaultprefix) }}{% endif %}
+{% endif %}
+
+{% if zabbix.version_repo|float >= 6.0 -%}
 ### Option: VaultDBPath
-#	Vault path from where credentials for database will be retrieved by keys 'password' and 'username'.
-#	Example: secret/zabbix/database
+#	Vault path or query depending on the Vault from where credentials for database will be retrieved by keys.
+#	Keys used for HashiCorp are 'password' and 'username'.
+#		Example path with VaultPrefix=/v1/secret/data/zabbix/:
+#			database
+#		Example path without VaultPrefix:
+#			secret/zabbix/database
+#	Keys used for CyberArk are 'Content' and 'UserName'.
+#		Example query:
+#			AppID=zabbix_server&Query=Safe=passwordSafe;Object=zabbix_proxy_database
 #	This option can only be used if DBUser and DBPassword are not specified.
 #
 # Mandatory: no
 # Default:
 # VaultDBPath=
 {% if settings.get('vaultdbpath', defaults.get('vaultdbpath', False)) %}VaultDBPath={{ settings.get('vaultdbpath', defaults.vaultdbpath) }}{% endif %}
+{% endif %}
+
+{% if zabbix.version_repo|float >= 6.2 -%}
+### Option: VaultTLSCertFile
+#	Name of the SSL certificate file used for client authentication. The certificate file must be in PEM1 format.
+#	If the certificate file contains also the private key, leave the SSL key file field empty. The directory
+#	containing this file is specified by configuration parameter SSLCertLocation.
+#
+# Mandatory: no
+# Default:
+# VaultTLSCertFile=
+{% if settings.get('vaulttlscertfile', defaults.get('vaulttlscertfile', False)) %}VaultTLSCertFile={{ settings.get('vaulttlscertfile', defaults.vaulttlscertfile) }}{% endif %}
+{% endif %}
+
+{% if zabbix.version_repo|float >= 6.2 -%}
+### Option: VaultTLSKeyFile
+#	Name of the SSL private key file used for client authentication. The private key file must be in PEM1 format.
+#	The directory containing this file is specified by configuration parameter SSLKeyLocation.
+#
+# Mandatory: no
+# Default:
+# VaultTLSKeyFile=
+{% if settings.get('vaulttlskeyfile', defaults.get('vaulttlskeyfile', False)) %}VaultTLSKeyFile={{ settings.get('vaulttlskeyfile', defaults.vaulttlskeyfile) }}{% endif %}
 {% endif %}
 
 ####### For advanced users - TCP-related fine-tuning parameters #######
@@ -1091,6 +1274,26 @@ LoadModule={{ loadmodule }}
 # Default: SOMAXCONN (hard-coded constant, depends on system)
 # ListenBacklog=
 {% if settings.get('listenbacklog', defaults.get('listenbacklog', False)) %}ListenBacklog={{ settings.get('listenbacklog', defaults.listenbacklog) }}{% endif %}
+
+{% if zabbix.version_repo|float >= 7.0 -%}
+####### Browser monitoring #######
+
+### Option: WebDriverURL
+#	WebDriver interface HTTP[S] URL. For example http://localhost:4444 used with Selenium WebDriver standalone server.
+#
+# Mandatory: no
+# Default:
+# WebDriverURL=
+{% if settings.get('webdriverurl', defaults.get('webdriverurl', False)) %}WebDriverURL={{ settings.get('webdriverurl', defaults.webdriverurl) }}{% endif %}
+
+### Option: StartBrowserPollers
+#	Number of pre-forked instances of browser item pollers.
+#
+# Mandatory: no
+# Range: 0-1000
+# Default:
+# StartBrowserPollers=1
+{% if settings.get('startbrowserpollers', defaults.get('startbrowserpollers', False)) %}StartBrowserPollers={{ settings.get('startbrowserpollers', defaults.startbrowserpollers) }}{% endif %}
 {% endif %}
 
 {{ settings.get('extra_conf','') }}
